@@ -248,3 +248,62 @@ In the program, w0 and w1 are represented in string format by the following:
 w0 = "qstart,q0,q1;0,1;qstart;q0;qstart,0->q0;qstart,1->q1;q0,0->q0;q0,1->q0;q1,0->q1;q1,1->q1"
 w1 = "rstart,r0,r1;0,1;rstart;r1;rstart,0->r0;rstart,1->r1;r0,0->r0;r0,1->r0;r1,0->r1;r1,1->r1"
 ```
+Running is_consistent on w0 and w1, the program constructs 2 DFAs on the input string.
+
+The function construct_dfa splits w0 and w1 respectively into:
+
+```python
+["qstart,q0,q1", "0,1", "qstart", "q0", "qstart,0->q0", "qstart,1->q1", "q0,0->q0", "q0,1->q0", "q1,0->q1", "q1,1->q1"]
+["rstart,r0,r1", "0,1", "rstart", "r1", "rstart,0->r0", "rstart,1->r1", "r0,0->r0", "r0,1->r0", "r1,0->r1", "r1,1->r1"]
+```
+
+In each list, index 0 to index 3 are assigned to their respective attributes.
+
+w0 for example:
+* states = ("qstart", "q0", "q1") (split by commas)
+* alphabet = ("1", "0") (split by commas)
+* start_state = "qstart"
+* accept_states = ("q0")
+
+Since each state, alphabet character, and accept-state must be unique, ChatGPT suggested to use sets to store these respective strings. DFAs only have 1 start-state, so we can just use a normal string to store "qstart".
+
+ChatGPT also suggested using a dictionary for storing the transitions between states where:
+* **key**: (current-state, input-character)
+* **value**: destination
+
+Thus, the transitions of w0 are stored in a dictionary as the following:
+```python
+{('qstart', '0'): 'q0', ('qstart', '1'): 'q1', ('q0', '0'): 'q0', ('q0', '1'): 'q0', ('q1', '0'): 'q1', ('q1', '1'): 'q1'}
+```
+
+Similarly, we have the attributes for w1:
+* states = ("rstart", "r0", "r1") (split by commas)
+* alphabet = ("1", "0") (split by commas)
+* start_state = "rstart"
+* accept_states = ("r1")
+
+and the transitions for r1:
+```python
+{('rstart', '0'): 'r0', ('rstart', '1'): 'r1', ('r0', '0'): 'r0', ('r0', '1'): 'r0', ('r1', '0'): 'r1', ('r1', '1'): 'r1'}
+```
+
+Following the construction of DFAs for w0 and w1, we now construct a new DFA representing their intersection.
+
+The formal definition of DFA intersection for a DFA M is given by:
+
+M = {Q, Σ, δ, q0, F}.
+* Q = Q1 x Q2
+* δ(((q, q'), x)) = (δ1((q, x)),δ2(q', x))
+* F = F1 x F2
+
+We can use a BFS approach to create this new DFA:
+
+
+
+
+
+
+
+
+
+
