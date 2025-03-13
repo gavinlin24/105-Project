@@ -439,6 +439,10 @@ In addition, the accept state is reachable from the start state. One example bei
 
 Thus, is_empty returns False, since there is a reachable accept-state. Since x0 ∩ x1 is non-empty, is_consistent returns True.
 
+### Results
+After the running the program, the output is:
+![result](result.png)
+
 
 
 
