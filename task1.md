@@ -329,7 +329,7 @@ transitions = {(('qstart', 'rstart'), '0'): ('q0', 'r0'),
                (('q1', 'r1'), '1'): ('q1', 'r1')}
 ```
 
-Finally, we can run another BFS function, to check whether the language of the intersection of the 2 DFAs is empty:
+Finally, we can run another BFS function, is_empty, to check whether the language of the intersection of the 2 DFAs is empty:
 1. Add the start state to the queue and initialize a visited set.
 2. While the queue is not empty:
     * Dequeue a state
@@ -366,9 +366,78 @@ with transitions:
 * δ(r1, 1) = r1
 
 ![x1](x1.png)
+
+Following the definition of DFA intersection, we construct the intersection over {0, 1} where L(x0 ∩ x1) = all strings that are even length and end with 1.
+
+M(x0 ∩ x1) = {{(q0, r1), (q1, r0), (q0, r0), (q1, r1)}, {0, 1}, δ, (q0, r0), {(q0, r1)}}
+with transitions: 
+* δ(((q0, r0), 0)) = (q1, r0)
+* δ(((q0, r0), 1)) = (q1, r1)
+* δ(((q1, r0), 0)) = (q0, r0)
+* δ(((q1, r0), 1)) = (q0, r1)
+* δ(((q1, r1), 0)) = (q0, r0)
+* δ(((q1, r1), 1)) = (q0, r1)
+* δ(((q0, r1), 0)) = (q1, r0)
+* δ(((q0, r1), 1)) = (q1, r1)
+
 ![intersection](intersection.png)
 
+Running the code again, x0 and x1 are represented as the following strings:
 
+```python
+x0 = "q0,q1;0,1;q0;q0;q0,1->q1;q0,0->q1;q1,1->q0;q1,0->q0"
+x1 = "r0,r1;0,1;r0;r1;r0,1->r1;r0,0->r0;r1,1->r1;r1,0->r0"
+```
+
+After parsing the string, x0 and x1 have the following constructions:
+```python
+# x0
+states = {'q1', 'q0'}
+alphabet = {'0', '1'}
+start_state = 'q0'
+accept_states = {'q0'}
+transitions = {('q0', '1'): 'q1',
+               ('q0', '0'): 'q1',
+               ('q1', '1'): 'q0',
+               ('q1', '0'): 'q0'}
+
+# x1
+states = {'r0', 'r1'}
+alphabet = {'0', '1'}
+start_state = 'r0'
+accept_states = {'r1'}
+transitions = {('r0', '1'): 'r1',
+               ('r0', '0'): 'r0',
+               ('r1', '1'): 'r1',
+               ('r1', '0'): 'r0'}
+```
+
+Using the same BFS construction, x0 ∩ x1 is as follows:
+```python
+# x0 ∩ x1
+
+states = {('q0', 'r1'), ('q1', 'r0'), ('q0', 'r0'), ('q1', 'r1')}
+alphabet = {'0', '1'}
+start_state = ('q0', 'r0')
+accept_states = {('q0', 'r1')}
+transitions = {(('q0', 'r0'), '0'): ('q1', 'r0'),
+               (('q0', 'r0'), '1'): ('q1', 'r1'),
+               (('q1', 'r0'), '0'): ('q0', 'r0'),
+               (('q1', 'r0'), '1'): ('q0', 'r1'),
+               (('q1', 'r1'), '0'): ('q0', 'r0'),
+               (('q1', 'r1'), '1'): ('q0', 'r1'),
+               (('q0', 'r1'), '0'): ('q1', 'r0'),
+               (('q0', 'r1'), '1'): ('q1', 'r1')}
+```
+Finally, we check using another BFS if x0 ∩ x1 recognizes the empty set with is_empty. 
+
+
+Unlike w0 ∩ w1, x0 ∩ x1 has an accepting state: (q0, r1).
+In addition, the accept state is reachable from the start state. One example being:
+* δ(((q0, r0), 0)) = (q1, r0)
+* δ(((q1, r0), 1)) = (q0, r1)
+
+Thus, is_empty returns False, since there is a reachable accept-state. Since x0 ∩ x1 is non-empty, is_consistent returns True.
 
 
 
