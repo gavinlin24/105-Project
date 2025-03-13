@@ -343,7 +343,30 @@ From our computed intersection of w0 and w1, we can see that there are no accept
 In the main function, is_consistent, the intersection recognizing the empty set means that the 2 original DFAs are inconsistent. Thus, the result of the computation on w0 and w1 is False.
 
 ### x0 and x1
+Let x0 be the language over {0, 1} where L(x0) = all even length strings. 
+We construct the DFA over x0, with the formal definition given by:
+ 
+M(x0) = {{q0, q1}, {0, 1}, δ, q0, {q0}}
+with transitions: 
+* δ(q0, 0) = q1 
+* δ(q0, 1) = q1 
+* δ(q1, 0) = q0 
+* δ(q1, 1) = q0 
 
+![x0](x0.png)
+
+Let x1 be the language over {0, 1} where L(x1) = all strings that end with 1. 
+We construct the DFA over x0, with the formal definition given by:
+ 
+M(x1) = {{r0, r1}, {0, 1}, δ, r0, {r1}}
+with transitions: 
+* δ(r0, 0) = r0 
+* δ(r0, 1) = r1 
+* δ(r1, 0) = r0
+* δ(r1, 1) = r1
+
+![x1](x1.png)
+![intersection](intersection.png)
 
 
 
