@@ -209,8 +209,8 @@ w1 = "rstart,r0,r1;0,1;rstart;r1;rstart,0->r0;rstart,1->r1;r0,0->r0;r0,1->r0;r1,
 x0 = "q0,q1;0,1;q0;q0;q0,1->q1;q0,0->q1;q1,1->q0;q1,0->q0"
 x1 = "r0,r1;0,1;r0;r1;r0,1->r1;r0,0->r0;r1,1->r1;r1,0->r0"
 
-print(is_consistent(w0, w1))
-print(is_consistent(x0, x1))
+print(f"Result of w0 and w1: {is_consistent(w0, w1)}")
+print(f"Result of x0 and x1: {is_consistent(x0, x1)}")
 ```
 ## String Representation of DFAs
 DFAs are represented by the 5-tuple definition in the program each seperated by a semi-colon and listed items seperated by commas. (This representation was created by ChatGPT)
@@ -296,8 +296,53 @@ M = {Q, Σ, δ, q0, F}.
 * δ(((q, q'), x)) = (δ1((q, x)),δ2(q', x))
 * F = F1 x F2
 
-We can use a BFS approach to create this new DFA:
+ChatGPT suggested that we can use a BFS approach to create this new DFA:
 
+1. Initialize the intersection DFA:
+    * Define the set of states, transitions, and accept states for the new DFA.
+    * The start state of the intersection DFA is (start state of DFA1, start state of DFA2).
+    * Add the start state to the queue and mark it as visited.
+3. While the queue is not empty:
+    * Dequeue a state (state1, state2).
+    * For each character in the alphabet:
+        * Find the next state in DFA1 using dfa1.get_state(state1, char).
+        * Find the next state in DFA2 using dfa2.get_state(state2, char).
+        * If both states have valid transitions, form a new state (next1, next2).
+        * If this new state hasn’t been visited before, add it to the queue and mark it as visited.
+        * Store the transition in the intersection DFA’s transition dictionary.
+4. Mark Accepting States:
+    * If both (state1) from DFA1 and (state2) from DFA2 are accepting states, then (state1, state2) is an accepting state in the intersection DFA.
+5. Continue until all reachable states are visited and stored in the DFA.
+
+Following this construction, we have:
+
+```python
+states = {('qstart', 'rstart'), ('q1', 'r1'), ('q0', 'r0')}
+alphabet = {'0', '1'}
+start_state = ('qstart', 'rstart')
+accept_states = ()
+transitions = {(('qstart', 'rstart'), '0'): ('q0', 'r0'),
+               (('qstart', 'rstart'), '1'): ('q1', 'r1'),
+               (('q0', 'r0'), '0'): ('q0', 'r0'),
+               (('q0', 'r0'), '1'): ('q0', 'r0'),
+               (('q1', 'r1'), '0'): ('q1', 'r1'),
+               (('q1', 'r1'), '1'): ('q1', 'r1')}
+```
+
+Finally, we can run another BFS function, to check whether the language of the intersection of the 2 DFAs is empty:
+1. Add the start state to the queue and initialize a visited set.
+2. While the queue is not empty:
+    * Dequeue a state
+    * If at any point we reach a accepting state, return False.
+    * Otherwise, explore the transitions for each character in the alphabet.
+    * If the next state is unvisited, mark it as visited and add it to the queue.
+3. If every state is visited and an accept state is not found, return True.
+
+From our computed intersection of w0 and w1, we can see that there are no accept-states. So running BFS on our intersection DFA will result in no accept-states being reached. Thus, the function returns True for the DFA accepting the empty set. 
+
+In the main function, is_consistent, the intersection recognizing the empty set means that the 2 original DFAs are inconsistent. Thus, the result of the computation on w0 and w1 is False.
+
+### x0 and x1
 
 
 
